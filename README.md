@@ -51,16 +51,36 @@ cp upload.sftp.example upload.sftp
 sftp -i ~/.ssh/id_ed25519 your_username@xdata1.twcc.ai -b upload.sftp
 ```
 
-#### 3c. 下載模型至 HFS
+#### 3c. 準備 GGUF 模型檔至 HFS
 
-```powershell
-# 使用 TWCC CCS 容器下載模型（約需 5-10 分鐘）
-. .\twcc_env.ps1
-.venv\Scripts\twccli.exe mk ccs -n dlmodel -itype PyTorch -img pytorch-24.08-py3:latest `
-  -gpu 1 -cmd "bash /work/your_username/scripts/inference.sh init" -wait
+Proxy 需要 GGUF 格式的模型檔放置於 HFS 的 `models/` 目錄。
+你可以從以下任一來源取得，再透過 SFTP 上傳：
+
+**推薦模型來源：**
+
+| 模型 | HuggingFace 頁面 | 大小 | HFS 路徑 |
+|------|-----------------|------|---------|
+| CrystalMind | [SciMaker/CrystalMind](https://huggingface.co/SciMaker/CrystalMind) | 5.6GB | `/work/<username>/models/CrystalMind.gguf` |
+| GemmaPro | [SciMaker/GemmaPro](https://huggingface.co/SciMaker/GemmaPro) | 2.4GB | `/work/<username>/models/GemmaPro_q4.gguf` |
+
+**上傳模型至 HFS：**
+
+```bash
+# 本地下載後，用 SFTP 上傳
+sftp -i ~/.ssh/id_ed25519 your_username@xdata1.twcc.ai
+put CrystalMind.gguf /work/your_username/models/CrystalMind.gguf
+put GemmaPro_q4.gguf /work/your_username/models/GemmaPro_q4.gguf
 ```
 
-> **注意**：模型檔案（CrystalMind 5.6GB、GemmaPro 2.4GB）儲存在 HFS，跨容器共用，只需下載一次。
+**亦可使用 HuggingFace Hub CLI 在 TWCC 容器內直接下載：**
+
+```bash
+# 在 TWCC CCS 容器內執行（需先設定 env.sh 中的 HF_TOKEN）
+pip install huggingface_hub
+huggingface-cli download SciMaker/CrystalMind --local-dir /work/your_username/models/
+```
+
+> **注意**：模型檔儲存在 HFS，跨容器共用，只需準備一次。
 
 ## HFS 目錄結構
 
