@@ -19,7 +19,7 @@
 ### 1. 建立本地虛擬環境
 
 ```powershell
-cd E:\APP\twcc_scripts   # 或你放置腳本的目錄
+cd \path\to\twcc-ollama-proxy
 uv venv
 uv pip install twccli paramiko flask
 ```
@@ -108,7 +108,7 @@ huggingface-cli download SciMaker/CrystalMind --local-dir /work/your_username/mo
 ### 啟動 Proxy
 
 ```powershell
-cd E:\APP\twcc_scripts
+cd \path\to\twcc-ollama-proxy
 . .\twcc_env.ps1
 .venv\Scripts\python.exe twcc_proxy.py
 ```
@@ -117,22 +117,19 @@ cd E:\APP\twcc_scripts
 
 ### 呼叫 API（Ollama 相容格式）
 
+Proxy 監聽 `localhost:11434`，與標準 Ollama API 相容，可直接替換 Ollama URL：
+
 ```python
 import requests
 
 response = requests.post("http://localhost:11434/api/generate", json={
     "model": "crystalmind",   # 或 gemmapro / gemmapro-r
-    "prompt": "你好，請介紹自己。"
+    "prompt": "Hello, introduce yourself."
 })
 print(response.json()["response"])
 ```
 
-### 搭配 claude_lit_workflow
-
-```powershell
-cd D:\core\Research\claude_lit_workflow
-uv run make_slides.py --pdf "paper.pdf" --llm-provider ollama --model crystalmind --language chinese
-```
+任何支援自訂 Ollama URL 的工具（如 Open WebUI、Continue.dev 等）均可直接對接。
 
 ## 支援模型
 
@@ -155,7 +152,6 @@ uv run make_slides.py --pdf "paper.pdf" --llm-provider ollama --model crystalmin
 | `SSH 金鑰找不到` | 金鑰路徑不符 | 設定 `TWCC_SSH_KEY` 環境變數 |
 | `TWCC 帳號未設定` | `twcc_env.ps1` 未修改 | 將 `your_username` 改為實際帳號 |
 | `推論逾時（600s）` | 容器啟動慢或模型首次建立 | 首次執行較慢屬正常，等待即可 |
-| `無法解析投影片格式` | LLM 未遵循輸出格式 | `parse_slides()` 已支援多種 fallback |
 
 ## 授權
 
