@@ -1,0 +1,16 @@
+# SFTP 批次上傳腳本範例
+# 用法：sftp -i ~/.ssh/id_ed25519 -b upload.sftp <username>@xdata1.twcc.ai
+# 請將 <username> 替換為實際帳號後存為 upload.sftp
+
+mkdir /home/<username>
+put env.sh /home/<username>/env.sh
+mkdir /work/<username>
+mkdir /work/<username>/scripts
+mkdir /work/<username>/logs
+mkdir /work/<username>/input
+mkdir /work/<username>/output
+mkdir /work/<username>/models
+put scripts/inference.sh /work/<username>/scripts/inference.sh
+ls /home/<username>/
+ls /work/<username>/
+bye
