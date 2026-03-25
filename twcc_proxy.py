@@ -34,8 +34,11 @@ SSH_KEY       = os.getenv("TWCC_SSH_KEY", str(Path.home() / ".ssh" / "id_ed25519
 HFS_PROXY_DIR = os.getenv("TWCC_HFS_PROXY_DIR", f"{_hfs_work}/proxy")
 HFS_WORK_DIR  = _hfs_work
 
-DEFAULT_MODEL    = os.getenv("TWCC_DEFAULT_MODEL", "crystalmind")
-SUPPORTED_MODELS = {"crystalmind", "gemmapro", "gemmapro-r"}
+# TWCC_DEFAULT_MODEL: 預設推論模型名稱（需與 HFS 上的 modelfile 一致）
+DEFAULT_MODEL    = os.getenv("TWCC_DEFAULT_MODEL", "your-model")
+# TWCC_SUPPORTED_MODELS: 逗號分隔的支援模型清單，例如 "model-a,model-b,model-c"
+_supported_env   = os.getenv("TWCC_SUPPORTED_MODELS", "")
+SUPPORTED_MODELS = set(_supported_env.split(",")) if _supported_env else {DEFAULT_MODEL}
 TWCCLI           = str(Path(__file__).parent / ".venv" / "Scripts" / "twccli.exe")
 TWCC_DATA_PATH   = os.getenv("TWCC_DATA_PATH", str(Path.home() / ".twcc_data"))
 CCS_IMAGE_TYPE   = os.getenv("TWCC_CCS_IMAGE_TYPE", "PyTorch")
