@@ -236,6 +236,7 @@ def startup_check() -> bool:
     print("TWCC Proxy 環境檢測")
     print("=" * 60)
 
+    global TWCCLI
     # ── 1. 虛擬環境 ──────────────────────────────────────
     in_venv = sys.prefix != sys.base_prefix
     venv_twccli = Path(TWCCLI)
@@ -249,7 +250,6 @@ def startup_check() -> bool:
         print("      uv pip install twccli paramiko flask")
 
     # ── 2. twccli ────────────────────────────────────────
-    global TWCCLI
     if venv_twccli.exists():
         print(f"[✓] twccli     ：{TWCCLI}  (venv)")
     else:

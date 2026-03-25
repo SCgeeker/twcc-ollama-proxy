@@ -1,6 +1,7 @@
 # ── 隱私與憑證 ──────────────────────────────────────────
 twcc_pw.txt
 env.sh
+twcc_env.ps1
 *.pem
 *.key
 .twcc_data/

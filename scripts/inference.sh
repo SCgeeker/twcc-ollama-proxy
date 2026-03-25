@@ -7,9 +7,10 @@ set -e
 
 JOB_ID="${1:-default}"
 MODEL="${2:-crystalmind}"
-source /home/tcpsr001/env.sh
+TWCC_USER="$(whoami)"
+source "/home/${TWCC_USER}/env.sh"
 
-WORK_DIR="/work/tcpsr001"
+WORK_DIR="/work/${TWCC_USER}"
 PROXY_DIR="${WORK_DIR}/proxy"
 INPUT_FILE="${PROXY_DIR}/input/${JOB_ID}.txt"
 OUTPUT_FILE="${PROXY_DIR}/output/${JOB_ID}.txt"
@@ -41,7 +42,7 @@ fi
 echo "--- 啟動 Ollama server ---"
 pkill ollama 2>/dev/null || true
 sleep 2
-OLLAMA_HOST=0.0.0.0:11434 OLLAMA_MODELS=/home/tcpsr001/ollama_models \
+OLLAMA_HOST=0.0.0.0:11434 OLLAMA_MODELS="/home/${TWCC_USER}/ollama_models" \
     ollama serve > "${PROXY_DIR}/logs/${JOB_ID}_server.log" 2>&1 &
 OLLAMA_PID=$!
 
@@ -99,7 +100,13 @@ esac
 
 # ── 執行推論 ───────────────────────────────────────────────
 echo "--- 開始推論（模型: ${MODEL}）---"
-TERM=dumb ollama run "${MODEL}" "${PROMPT}" > "${OUTPUT_FILE}" 2>&1
+PROMPT_JSON=$(python3 -c "import json,sys; print(json.dumps(sys.stdin.read()))" < "${INPUT_FILE}")
+TEMP_OUTPUT="${OUTPUT_FILE}.tmp"
+curl -s --max-time 300 http://127.0.0.1:11434/api/generate \
+    -d "{\"model\": \"${MODEL}\", \"prompt\": ${PROMPT_JSON}, \"stream\": false}" \
+    | python3 -c "import sys,json; print(json.load(sys.stdin).get('response',''))" \
+    > "${TEMP_OUTPUT}"
+mv "${TEMP_OUTPUT}" "${OUTPUT_FILE}"
 echo "--- 推論完成，結果: ${OUTPUT_FILE} ---"
 
 echo "=== 任務結束: $(date) ==="
