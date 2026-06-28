@@ -1,0 +1,17 @@
+mkdir /home/tcpsr001
+put env.sh /home/tcpsr001/env.sh
+mkdir /work/tcpsr001
+mkdir /work/tcpsr001/scripts
+mkdir /work/tcpsr001/logs
+mkdir /work/tcpsr001/input
+mkdir /work/tcpsr001/output
+mkdir /work/tcpsr001/models
+mkdir /work/tcpsr001/proxy
+mkdir /work/tcpsr001/proxy/input
+mkdir /work/tcpsr001/proxy/output
+mkdir /work/tcpsr001/proxy/logs
+put scripts/inference.sh /work/tcpsr001/scripts/inference.sh
+put scripts/embedding.sh /work/tcpsr001/scripts/embedding.sh
+ls /home/tcpsr001/
+ls /work/tcpsr001/
+bye
